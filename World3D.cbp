@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="abril14i" />
+		<Option title="World3D" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/abril14i" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/World3D" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -23,7 +23,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/abril14i" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/World3D" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -32,6 +32,10 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libopengl32.a" />
+					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libgdi32.a" />
+					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglu32.a" />
+					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglaux.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -42,6 +46,10 @@
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="gdi32" />
+			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libopengl32.a" />
+			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libgdi32.a" />
+			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglu32.a" />
+			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglaux.a" />
 		</Linker>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
