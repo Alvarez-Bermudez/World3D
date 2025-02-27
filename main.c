@@ -5,59 +5,11 @@
 #include <math.h>
 #include <gl/glext.h>
 
-#include "midata.h"
+#include "settings.h"
+#include "drawing.h"
+#include "miscellaneous.h"
 #include "stb_image.h"
-//#include "src/SOIL.h"
 
-enum {Bottom=0,Top,LeftSide,RightSide,FrontSide,BackSide};
-
-//Main variables
-//Textures variables
-GLuint caras[TOTAL_CARAS],texCaras[TOTAL_CARAS];
-GLuint texCarasCielo[TOTAL_CARAS],carasCielo[TOTAL_CARAS];
-//Settings and functional variables
-float rotatex=0, rotatey=0; //Rotation angles
-float sensibilidad_mouse=0.2f; //Mouse sensitivity
-int ventana_left=0,ventana_top=0; //Some window position variables
-float lookx=0,looky=0,lookz=-5,bb=-5; //Camera aim coordinates
-float aimdist=5; //Camera aim distance
-float posx=0,posy=0,posz=0; //Camera position coordinates
-point punto,punto2; //Cursor coordinate variables
-float unidad_mov = 1.0f;// Movement unit
-float _bottom = -10.0;
-float slideDownSky= -50.0f; //Es usada para deslizar el cielo hacia abajo (todas las caras del cubo excepto bottom)
-
-//Window objects/structures
-WNDCLASSEX wcex;
-HWND hwnd;
-HDC hDC;
-HGLRC hRC;
-MSG msg;
-BOOL bQuit = FALSE;
-
-//Functions and methods
-//Win API
-LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
-void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
-void DisableOpenGL(HWND, HDC, HGLRC);
-
-//Functional from World 3D
-void init();
-void cargarTextura(GLuint tex_id, char* filePath);
-//House
-void DibujarHouseBottom(GLuint id, GLuint texid);
-void DibujarHouseTop(GLuint id, GLuint texid);
-void DibujarHouseLeftSide(GLuint id, GLuint texid);
-void DibujarHouseRightSide(GLuint id, GLuint texid);
-void DibujarHouseFrontSide(GLuint id, GLuint texid);
-void DibujarHouseBackSide(GLuint id, GLuint texid);
-//Sky
-void DibujarCieloBottom(GLuint id, GLuint texid);
-void DibujarCieloTop(GLuint id, GLuint texid);
-void DibujarCieloLeftSide(GLuint id, GLuint texid);
-void DibujarCieloRightSide(GLuint id, GLuint texid);
-void DibujarCieloFrontSide(GLuint id, GLuint texid);
-void DibujarCieloBackSide(GLuint id, GLuint texid);
 
 
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -114,7 +66,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
     //Activamos las texturas
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
-    init();
+    initWorld3D_GLObjects();
     ///glEnable(GL_TEXTURE_2D);
     /* program main loop */
     while (!bQuit)
@@ -136,10 +88,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
         else
         {
             // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            glClearDepth(2);
+            glClearDepth(1);
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//|GL_DEPTH_BUFFER_BIT
             glClearColor(0.9,0.9,0.9,1);
-            float color1[3]= {1,0,0};
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
@@ -148,7 +99,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             ///glOrtho(0,ANCHO,0,ALTO,-1000,1000);
-            gluPerspective(60,1,1,1000);
+            gluPerspective(60,1,1,5000);
             //glLoadIdentity();
             glPushMatrix();
             //glDisable(GL_BLEND);
@@ -164,23 +115,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
             //glDepthFunc(GL_LEQUAL);
 
             //Draw sky
-            glCallList(carasCielo[Bottom]);
-            glCallList(carasCielo[Top]);
-            glCallList(carasCielo[LeftSide]);
-            glCallList(carasCielo[RightSide]);
-            glCallList(carasCielo[FrontSide]);
-            glCallList(carasCielo[BackSide]);
+            DrawSky();
+
             //glDisable(GL_DEPTH_TEST);
             //glEnable(GL_BLEND);
 
             //Draw home
             glEnable(GL_DEPTH_TEST);
-            glCallList(caras[Bottom]);
-            glCallList(caras[Top]);
-            glCallList(caras[LeftSide]);
-            glCallList(caras[RightSide]);
-            glCallList(caras[FrontSide]);
-            glCallList(caras[BackSide]);
+            DrawHouse(0); //Draw first house
             glDisable(GL_BLEND);
             glDisable(GL_DEPTH_TEST);
 
@@ -313,345 +255,4 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-void EnableOpenGL(HWND hwnd, HDC* hDC, HGLRC* hRC)
-{
-    PIXELFORMATDESCRIPTOR pfd;
 
-    int iFormat;
-
-    /* get the device context (DC) */
-    *hDC = GetDC(hwnd);
-
-    /* set the pixel format for the DC */
-    ZeroMemory(&pfd, sizeof(pfd));
-
-    pfd.nSize = sizeof(pfd);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_WINDOW |
-                  PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 24;
-    pfd.cDepthBits = 16;
-    pfd.iLayerType = PFD_MAIN_PLANE;
-
-    iFormat = ChoosePixelFormat(*hDC, &pfd);
-
-    SetPixelFormat(*hDC, iFormat, &pfd);
-
-    /* create and enable the render context (RC) */
-    *hRC = wglCreateContext(*hDC);
-
-    wglMakeCurrent(*hDC, *hRC);
-}
-
-void DisableOpenGL (HWND hwnd, HDC hDC, HGLRC hRC)
-{
-    wglMakeCurrent(NULL, NULL);
-    wglDeleteContext(hRC);
-    ReleaseDC(hwnd, hDC);
-}
-
-void cargarTextura(GLuint tex_id, char* filePath)
-{
-    unsigned char* imgData;
-    int _largo, _alto, _channels;
-
-    imgData = stbi_load(filePath, &_largo, &_alto, &_channels, 4);
-    if (imgData)
-    {
-        glBindTexture(GL_TEXTURE_2D, tex_id);
-        glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA, _largo, _alto, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        stbi_image_free(imgData);
-    }
-    else printf("Error: No fue posible cargar la imagen! %s \n", filePath);
-}
-
-void init()
-{
-    //glEnable(GL_BLEND);
-    //glEnable(GL_DEPTH_TEST);
-    glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
-
-    glGenTextures(TOTAL_CARAS,texCaras);
-
-    cargarTextura(texCaras[Bottom],"res/image/home/suelo.png");
-    cargarTextura(texCaras[Top],"res/image/home/techo.png");
-    cargarTextura(texCaras[LeftSide],"res/image/home/cara1.png");
-    cargarTextura(texCaras[RightSide],"res/image/home/cara2.png");
-    cargarTextura(texCaras[FrontSide],"res/image/home/cara3.png");
-    cargarTextura(texCaras[BackSide],"res/image/home/cara4.png");
-
-    glGenTextures(TOTAL_CARAS,texCarasCielo);
-    cargarTextura(texCarasCielo[Bottom],"res/image/world/_bajo.bmp");
-    cargarTextura(texCarasCielo[Top],"res/image/world/arriba.bmp");
-    cargarTextura(texCarasCielo[LeftSide],"res/image/world/nube1.bmp");
-    cargarTextura(texCarasCielo[RightSide],"res/image/world/nube3.bmp");
-    cargarTextura(texCarasCielo[FrontSide],"res/image/world/nube2.bmp");
-    cargarTextura(texCarasCielo[BackSide],"res/image/world/nube4.bmp");
-
-    caras[Bottom]=glGenLists(TOTAL_CARAS);
-    caras[Top]=caras[Bottom]+1;
-    caras[LeftSide]=caras[Bottom]+2;
-    caras[RightSide]=caras[Bottom]+3;
-    caras[FrontSide]=caras[Bottom]+4;
-    caras[BackSide]=caras[Bottom]+5;
-
-    carasCielo[Bottom]=glGenLists(TOTAL_CARAS);
-    carasCielo[Top]=carasCielo[Bottom]+1;
-    carasCielo[LeftSide]=carasCielo[Bottom]+2;
-    carasCielo[RightSide]=carasCielo[Bottom]+3;
-    carasCielo[FrontSide]=carasCielo[Bottom]+4;
-    carasCielo[BackSide]=carasCielo[Bottom]+5;
-
-    DibujarCieloBottom(carasCielo[Bottom],texCarasCielo[Bottom]);
-    DibujarCieloTop(carasCielo[Top],texCarasCielo[Top]);
-    DibujarCieloLeftSide(carasCielo[LeftSide],texCarasCielo[LeftSide]);
-    DibujarCieloRightSide(carasCielo[RightSide],texCarasCielo[RightSide]);
-    DibujarCieloFrontSide(carasCielo[FrontSide],texCarasCielo[FrontSide]);
-    DibujarCieloBackSide(carasCielo[BackSide],texCarasCielo[BackSide]);
-
-    //DibujarHouseBottom(caras[Bottom],texCaras[Bottom]);
-    DibujarHouseTop(caras[Top],texCaras[Top]);
-    DibujarHouseLeftSide(caras[LeftSide],texCaras[LeftSide]);
-    DibujarHouseRightSide(caras[RightSide],texCaras[FrontSide]);
-    DibujarHouseFrontSide(caras[FrontSide],texCaras[BackSide]);
-    DibujarHouseBackSide(caras[BackSide],texCaras[RightSide]);
-
-}
-
-void DibujarHouseBottom(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-
-	float Pos=10.0;
-
-	glTexCoord2i(0,0);
-    glVertex3f(-Pos,-Pos,Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(Pos,-Pos,Pos);
-    glTexCoord2i(1,1);
-    glVertex3f(Pos,-Pos,-Pos);
-    glTexCoord2i(0,1);
-    glVertex3f(-Pos,-Pos,-Pos);
-    glEnd();
-    glEndList();
-
-}
-
-void DibujarHouseTop(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-
-	float Pos=10.0;
-
-    glTexCoord2i(0,0);
-    glVertex3f(-Pos,Pos,Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(Pos,Pos,Pos);
-    glTexCoord2i(1,1);
-    glVertex3f(Pos,Pos,-Pos);
-    glTexCoord2i(0,1);
-    glVertex3f(-Pos,Pos,-Pos);
-    glEnd();
-    glEndList();
-
-}
-
-void DibujarHouseLeftSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-
-	float Pos=10.0;
-
-	glTexCoord2i(0,1);
-    glVertex3f(-Pos,-Pos,Pos);
-    glTexCoord2i(1,1);
-    glVertex3f(-Pos,-Pos,-Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(-Pos,Pos,-Pos);
-    glTexCoord2i(0,0);
-    glVertex3f(-Pos,Pos,Pos);
-    glEnd();
-    glEndList();
-
-
-}
-void DibujarHouseRightSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-
-	float Pos=10.0;
-
-	glTexCoord2i(0,1);
-    glVertex3f(Pos,-Pos,Pos);
-    glTexCoord2i(1,1);
-    glVertex3f(Pos,-Pos,-Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(Pos,Pos,-Pos);
-    glTexCoord2i(0,0);
-    glVertex3f(Pos,Pos,Pos);
-    glEnd();
-    glEndList();
-}
-void DibujarHouseFrontSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-
-	float Pos=10.0;
-
-	glTexCoord2i(0,1);
-    glVertex3f(-Pos,-Pos,Pos);
-    glTexCoord2i(1,1);
-    glVertex3f(Pos,-Pos,Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(Pos,Pos,Pos);
-    glTexCoord2i(0,0);
-    glVertex3f(-Pos,Pos,Pos);
-    glEnd();
-    glEndList();
-}
-void DibujarHouseBackSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-
-	float Pos=10.0;
-
-	glTexCoord2i(0,1);
-    glVertex3f(-Pos,-Pos,-Pos);
-    glTexCoord2i(1,1);
-    glVertex3f(Pos,-Pos,-Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(Pos,Pos,-Pos);
-    glTexCoord2i(0,0);
-    glVertex3f(-Pos,Pos,-Pos);
-    glEnd();
-    glEndList();
-}
-
-void DibujarCieloBottom(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO,_bottom,MUNDO_LARGO);
-    glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO,_bottom,MUNDO_LARGO);
-    glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO,_bottom,-MUNDO_LARGO);
-    glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,_bottom,-MUNDO_LARGO);
-    glEnd();
-    glEndList();
-}
-
-void DibujarCieloTop(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
-    glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
-    glEnd();
-    glEndList();
-}
-
-void DibujarCieloLeftSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky, MUNDO_LARGO);
-    glTexCoord2i(1,1);
-    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky, -MUNDO_LARGO);
-    glTexCoord2i(1,0);
-    glVertex3f(-MUNDO_LARGO, _bottom+ 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
-    glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO, _bottom+ 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
-    glEnd();
-    glEndList();
-}
-void DibujarCieloRightSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,-MUNDO_LARGO);
-    glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(0,0);
-    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
-    glEnd();
-    glEndList();
-}
-void DibujarCieloFrontSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(1,1);
-    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(1,0);
-    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
-    glTexCoord2i(0,0);
-    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
-    glEnd();
-    glEndList();
-}
-void DibujarCieloBackSide(GLuint id, GLuint texid)
-{
-    glNewList(id, GL_COMPILE);
-    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glBindTexture(GL_TEXTURE_2D,texid);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky,-MUNDO_LARGO);
-    glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,-MUNDO_LARGO);
-    glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
-    glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
-    glEnd();
-    glEndList();
-}

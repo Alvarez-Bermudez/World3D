@@ -14,7 +14,7 @@ En mi caso la ruta para estas librerías fueron:
 "C:/Program Files (x86)/CodeBlocks/MinGW/lib/libgdi32.a",  
 "C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglu32.a",  
 "C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglaux.a".  
-Pero si no es tu caso, deberías encontrar estas librerías en la carpeta "lib" de tu compilador.  
+Pero si no es tu caso, deberías encontrar estas librerías en la carpeta "/lib" de tu compilador.  
 
 
 ## Algunas indicaciones

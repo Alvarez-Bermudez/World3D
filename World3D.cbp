@@ -51,10 +51,12 @@
 			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglu32.a" />
 			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglaux.a" />
 		</Linker>
+		<Unit filename="drawing.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="midata.h" />
+		<Unit filename="miscellaneous.h" />
+		<Unit filename="settings.h" />
 		<Unit filename="src/SOIL.c">
 			<Option compilerVar="CC" />
 		</Unit>
