@@ -11,7 +11,7 @@
 #define ORIGENX 100
 #define ORIGENY 100
 #define MUNDO_LARGO 500
-
+#define TOTAL_CARAS 6
 
 float temporal = MUNDO_LARGO;
 

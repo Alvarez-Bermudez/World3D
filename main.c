@@ -6,25 +6,26 @@
 #include <gl/glext.h>
 
 #include "midata.h"
-//#include "src/SOIL.h"
 #include "stb_image.h"
+//#include "src/SOIL.h"
 
+enum {Bottom=0,Top,LeftSide,RightSide,FrontSide,BackSide};
 
 //Main variables
-GLuint caras[6],texCaras[6];
-GLuint texCarasCielo[6],carasCielo[6];
-float anglex,anglez,angley;
-float rotatex=0, rotatey=0;
-float sensibilidad_mov=10;
-int sensibilidad_mouse=5;
-int ventana_leftx=0,ventana_upy=0;
-float theta = 0.0f;
-float lookx=0,looky=0,lookz=-5,bb=-5;;
-float aimdist=5;
-float posx=0,posy=0,posz=0;
-point punto,punto2;
-float unidad_mov=1.0f;
+//Textures variables
+GLuint caras[TOTAL_CARAS],texCaras[TOTAL_CARAS];
+GLuint texCarasCielo[TOTAL_CARAS],carasCielo[TOTAL_CARAS];
+//Settings and functional variables
+float rotatex=0, rotatey=0; //Rotation angles
+float sensibilidad_mouse=0.2f; //Mouse sensitivity
+int ventana_left=0,ventana_top=0; //Some window position variables
+float lookx=0,looky=0,lookz=-5,bb=-5; //Camera aim coordinates
+float aimdist=5; //Camera aim distance
+float posx=0,posy=0,posz=0; //Camera position coordinates
+point punto,punto2; //Cursor coordinate variables
+float unidad_mov=1.0f;// Movement unit
 
+//Window objects/structures
 WNDCLASSEX wcex;
 HWND hwnd;
 HDC hDC;
@@ -33,13 +34,12 @@ MSG msg;
 BOOL bQuit = FALSE;
 
 //Functions and methods
-
-//default
+//Win API
 LRESULT CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 void EnableOpenGL(HWND hwnd, HDC*, HGLRC*);
 void DisableOpenGL(HWND, HDC, HGLRC);
 
-//Functional
+//Functional from World 3D
 void init();
 void cargarTextura(GLuint tex_id, char* filePath);
 //House
@@ -63,13 +63,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    LPSTR lpCmdLine,
                    int nCmdShow)
 {
-    
+
     /*for (int hh=0; hh<20; hh++)
         printf("\n");
     */
 
-    punto.x=(ventana_leftx+ANCHO)/2;
-    punto.y=(ventana_upy+ALTO)/2;
+    punto.x=(ventana_left+ANCHO)/2;
+    punto.y=(ventana_top+ALTO)/2;
     //ClientToScreen(hwnd,&punto);
     SetCursorPos(punto.x,punto.y);
 
@@ -95,8 +95,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
                           "World3D",
                           "World 3D",
                           WS_OVERLAPPEDWINDOW,
-                          ventana_leftx,
-                          ventana_upy,
+                          ventana_left,
+                          ventana_top,
                           ANCHO,
                           ALTO,
                           NULL,
@@ -138,7 +138,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
             glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//|GL_DEPTH_BUFFER_BIT
             glClearColor(0.9,0.9,0.9,1);
             float color1[3]= {1,0,0};
-            
+
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             gluLookAt(posx,posy,posz,lookx,looky,lookz,0,1,0);
@@ -160,28 +160,28 @@ int WINAPI WinMain(HINSTANCE hInstance,
             //glFrontFace(GL_CCW);
             glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
             //glDepthFunc(GL_LEQUAL);
-            
-            //Draw sky
-            glCallList(carasCielo[0]);
-            glCallList(carasCielo[1]);
-            glCallList(carasCielo[2]);
-            glCallList(carasCielo[3]);
-            glCallList(carasCielo[4]);
-            glCallList(carasCielo[5]);
 
+            //Draw sky
+            glCallList(carasCielo[Bottom]);
+            glCallList(carasCielo[Top]);
+            glCallList(carasCielo[LeftSide]);
+            glCallList(carasCielo[RightSide]);
+            glCallList(carasCielo[FrontSide]);
+            glCallList(carasCielo[BackSide]);
             //glDisable(GL_DEPTH_TEST);
             //glEnable(GL_BLEND);
 
             //Draw home
             glEnable(GL_DEPTH_TEST);
-            glCallList(caras[0]);
-            glCallList(caras[1]);
-            glCallList(caras[2]);
-            glCallList(caras[3]);
-            glCallList(caras[4]);
-            glCallList(caras[5]);
+            glCallList(caras[Bottom]);
+            glCallList(caras[Top]);
+            glCallList(caras[LeftSide]);
+            glCallList(caras[RightSide]);
+            glCallList(caras[FrontSide]);
+            glCallList(caras[BackSide]);
             glDisable(GL_BLEND);
             glDisable(GL_DEPTH_TEST);
+
             ///Activar
             //glEnable(GL_DEPTH_TEST);
             //glPopMatrix();
@@ -206,82 +206,99 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_CLOSE:
         PostQuitMessage(0);
-        break;
+    break;
 
     case WM_DESTROY:
         return 0;
 
     case WM_SETCURSOR:
+
         GetCursorPos(&punto2);
-        
+
         SetCursor(LoadCursor(wcex.hInstance,"IDC_ARROW"));
-        rotatex+=(punto2.x-(ventana_leftx+(ANCHO/2)))*0.2;
-        
+        rotatex+=(punto2.x-(ventana_left+(ANCHO/2)))*sensibilidad_mouse; //Incrementar el angulo horizontal con la separaci'on del cursor del centro de la ventana en el eje horizontal de la pantalla
+        //rotatex se puede considerar como un angulo polar y expresar el sistema en coordenadas cil'indricas
+
+        //hallar las componentes de los ejes horizontales (x, z) segun el angulo de rotacion rotatex y actualizar la direccion de la camara
+        //en dichos ejes
         lookx=posx+(int)aimdist*sin(ConvertAngleToRadian(rotatex));
         lookz=posz-(int)aimdist*cos(ConvertAngleToRadian(rotatex));
-        
-        rotatey+=-(punto2.y-(ventana_upy+ALTO/2))*0.2;
+
+        //Incrementar el angulo vertical con la separaci'on del cursor del centro de la ventana en el eje vertical de la pantalla
+        //rotatey+=-float(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
+        rotatey+=-(float)(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
+
         rotatey=ConvertAngleToRadian(rotatey);
         looky+=(float)aimdist*sin(rotatey);
         looky=max(min(looky,10),-10);
-        
-        SetCursorPos((ventana_leftx+ANCHO)/2,(ventana_upy+ALTO)/2);
-        break;
+        //Note que el camera aim en el eje y tiene un m'aximo y un m'inimo
+        ///Para un mejor funcionamiento, ser'ia recomendable implementar el funcionamiento usando coordenadas esf'ericas en vez de cil'indricas
+
+        //Set the cursor in the center of the window
+        SetCursorPos((ventana_left+ANCHO)/2,(ventana_top+ALTO)/2);
+        //Cada vez que se mueva el cursor, la variaci'on de posici'on con respecto al centro definir'a la forma de dirigir el camera aim,
+        //despues de este movimiento, ser'a restablecido la posicion del cursor hacia el centro de la ventana nuevamente.
+
+    break;
 
     case WM_KEYDOWN:
-    
-        sensibilidad_mov=2;
+
 
         switch (wParam)
         {
         case VK_ESCAPE:
             PostQuitMessage(0);
         break;
-        
+
         ///Move body
+        //Las teclas A,S,D y W solo desplazan la c'amara horizontalmente (axes x and z)
         //Move left
         case 'A':
-            posx-=1*unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posz-=1*unidad_mov*sin(ConvertAngleToRadian(rotatex));
+        case VK_LEFT:
+            posx-=unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            posz-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
         break;
-        
+
         //Move right
         case 'D':
-            posx+=1*unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posz+=1*unidad_mov*sin(ConvertAngleToRadian(rotatex));
+        case VK_RIGHT:
+            posx+=unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            posz+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
         break;
-        
+
         //Move forward
         case 'W':
+        case VK_UP:
             //printf("Grado rotx in deg: %f  Grado rotx in rad: %f\n",rotatex,ConvertAngleToRadian(rotatex));
-            posz+=-1*unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posx+=1*unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            posx+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            posz+=-unidad_mov*cos(ConvertAngleToRadian(rotatex));
         break;
-        
+
         //Move back
         case 'S':
-            posz-=-1*unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posx-=1*unidad_mov*sin(ConvertAngleToRadian(rotatex));
+        case VK_DOWN:
+            posx-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            posz-=-unidad_mov*cos(ConvertAngleToRadian(rotatex));
         break;
-        
+
         //Aim camera manually
         case 'I':
             lookx+=1;
         break;
-    
+
         case 'K':
             lookx-=1;
         break;
-    
+
         case 'J':
             lookz-=1;
         break;
-        
+
         case 'L':
             lookz+=1;
         break;
         }
-        
+
         //See some important variables
         printf("looky %f lookx %f lookz %f     posx %f posz %f\n",looky,lookx,lookz,posx,posz);
 
@@ -335,14 +352,13 @@ void DisableOpenGL (HWND hwnd, HDC hDC, HGLRC hRC)
 void cargarTextura(GLuint tex_id, char* filePath)
 {
     unsigned char* imgData;
-    int largura, altura, canais;
+    int _largo, _alto, _channels;
 
-    //stbi_set_flip_vertically_on_load(TRUE);
-    imgData = stbi_load(filePath, &largura, &altura, &canais, 4);
+    imgData = stbi_load(filePath, &_largo, &_alto, &_channels, 4);
     if (imgData)
     {
         glBindTexture(GL_TEXTURE_2D, tex_id);
-        glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA, largura, altura, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
+        glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA, _largo, _alto, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -350,66 +366,59 @@ void cargarTextura(GLuint tex_id, char* filePath)
 
         stbi_image_free(imgData);
     }
-    else
-    {
-        printf("Error: No fue posible cargar la imagen! %s \n", filePath);
-    }
-
+    else printf("Error: No fue posible cargar la imagen! %s \n", filePath);
 }
-
 
 void init()
 {
     //glEnable(GL_BLEND);
     //glEnable(GL_DEPTH_TEST);
     glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
-    glGenTextures(6,texCaras);
 
-    cargarTextura(texCaras[0],"res/image/home/suelo.png");
-    cargarTextura(texCaras[1],"res/image/home/techo.png");
-    cargarTextura(texCaras[2],"res/image/home/cara1.png");
-    cargarTextura(texCaras[3],"res/image/home/cara2.png");
-    cargarTextura(texCaras[4],"res/image/home/cara3.png");
-    cargarTextura(texCaras[5],"res/image/home/cara4.png");
+    glGenTextures(TOTAL_CARAS,texCaras);
 
-    glGenTextures(6,texCarasCielo);
-    cargarTextura(texCarasCielo[0],"res/image/world/_bajo.bmp");
-    cargarTextura(texCarasCielo[1],"res/image/world/arriba.bmp");
-    cargarTextura(texCarasCielo[2],"res/image/world/nube1.bmp");
-    cargarTextura(texCarasCielo[3],"res/image/world/nube3.bmp");
-    cargarTextura(texCarasCielo[4],"res/image/world/nube2.bmp");
-    cargarTextura(texCarasCielo[5],"res/image/world/nube4.bmp");
+    cargarTextura(texCaras[Bottom],"res/image/home/suelo.png");
+    cargarTextura(texCaras[Top],"res/image/home/techo.png");
+    cargarTextura(texCaras[LeftSide],"res/image/home/cara1.png");
+    cargarTextura(texCaras[RightSide],"res/image/home/cara2.png");
+    cargarTextura(texCaras[FrontSide],"res/image/home/cara3.png");
+    cargarTextura(texCaras[BackSide],"res/image/home/cara4.png");
 
-    caras[0]=glGenLists(6);
-    caras[1]=caras[0]+1;
-    caras[2]=caras[0]+2;
-    caras[3]=caras[0]+3;
-    caras[4]=caras[0]+4;
-    caras[5]=caras[0]+5;
+    glGenTextures(TOTAL_CARAS,texCarasCielo);
+    cargarTextura(texCarasCielo[Bottom],"res/image/world/_bajo.bmp");
+    cargarTextura(texCarasCielo[Top],"res/image/world/arriba.bmp");
+    cargarTextura(texCarasCielo[LeftSide],"res/image/world/nube1.bmp");
+    cargarTextura(texCarasCielo[RightSide],"res/image/world/nube3.bmp");
+    cargarTextura(texCarasCielo[FrontSide],"res/image/world/nube2.bmp");
+    cargarTextura(texCarasCielo[BackSide],"res/image/world/nube4.bmp");
 
+    caras[Bottom]=glGenLists(TOTAL_CARAS);
+    caras[Top]=caras[Bottom]+1;
+    caras[LeftSide]=caras[Bottom]+2;
+    caras[RightSide]=caras[Bottom]+3;
+    caras[FrontSide]=caras[Bottom]+4;
+    caras[BackSide]=caras[Bottom]+5;
 
-    carasCielo[0]=glGenLists(6);
-    carasCielo[1]=carasCielo[0]+1;
-    carasCielo[2]=carasCielo[0]+2;
-    carasCielo[3]=carasCielo[0]+3;
-    carasCielo[4]=carasCielo[0]+4;
-    carasCielo[5]=carasCielo[0]+5;
+    carasCielo[Bottom]=glGenLists(TOTAL_CARAS);
+    carasCielo[Top]=carasCielo[Bottom]+1;
+    carasCielo[LeftSide]=carasCielo[Bottom]+2;
+    carasCielo[RightSide]=carasCielo[Bottom]+3;
+    carasCielo[FrontSide]=carasCielo[Bottom]+4;
+    carasCielo[BackSide]=carasCielo[Bottom]+5;
 
-    DibujarCieloBottom(carasCielo[0],texCarasCielo[0]);
-    DibujarCieloTop(carasCielo[1],texCarasCielo[1]);
-    DibujarCieloLeftSide(carasCielo[2],texCarasCielo[2]);
-    DibujarCieloRightSide(carasCielo[3],texCarasCielo[3]);
-    DibujarCieloFrontSide(carasCielo[4],texCarasCielo[4]);
-    DibujarCieloBackSide(carasCielo[5],texCarasCielo[5]);
+    DibujarCieloBottom(carasCielo[Bottom],texCarasCielo[Bottom]);
+    DibujarCieloTop(carasCielo[Top],texCarasCielo[Top]);
+    DibujarCieloLeftSide(carasCielo[LeftSide],texCarasCielo[LeftSide]);
+    DibujarCieloRightSide(carasCielo[RightSide],texCarasCielo[RightSide]);
+    DibujarCieloFrontSide(carasCielo[FrontSide],texCarasCielo[FrontSide]);
+    DibujarCieloBackSide(carasCielo[BackSide],texCarasCielo[BackSide]);
 
-    //DibujarHouseBottom(caras[0],texCaras[0]);
-    DibujarHouseTop(caras[1],texCaras[1]);
-    DibujarHouseLeftSide(caras[2],texCaras[2]);
-    DibujarHouseRightSide(caras[3],texCaras[4]);
-    DibujarHouseFrontSide(caras[4],texCaras[5]);
-    DibujarHouseBackSide(caras[5],texCaras[3]);
-
-
+    //DibujarHouseBottom(caras[Bottom],texCaras[Bottom]);
+    DibujarHouseTop(caras[Top],texCaras[Top]);
+    DibujarHouseLeftSide(caras[LeftSide],texCaras[LeftSide]);
+    DibujarHouseRightSide(caras[RightSide],texCaras[FrontSide]);
+    DibujarHouseFrontSide(caras[FrontSide],texCaras[BackSide]);
+    DibujarHouseBackSide(caras[BackSide],texCaras[RightSide]);
 
 }
 
@@ -419,15 +428,17 @@ void DibujarHouseBottom(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
-    glTexCoord2i(0,0);
-    float varY=10.0;
-    glVertex3f(-10,-varY,10);
+
+	float Pos=10.0;
+
+	glTexCoord2i(0,0);
+    glVertex3f(-Pos,-Pos,Pos);
     glTexCoord2i(1,0);
-    glVertex3f(10,-varY,10);
+    glVertex3f(Pos,-Pos,Pos);
     glTexCoord2i(1,1);
-    glVertex3f(10,-varY,-10);
+    glVertex3f(Pos,-Pos,-Pos);
     glTexCoord2i(0,1);
-    glVertex3f(-10,-varY,-10);
+    glVertex3f(-Pos,-Pos,-Pos);
     glEnd();
     glEndList();
 
@@ -439,14 +450,17 @@ void DibujarHouseTop(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
+
+	float Pos=10.0;
+
     glTexCoord2i(0,0);
-    glVertex3f(-10,10,10);
+    glVertex3f(-Pos,Pos,Pos);
     glTexCoord2i(1,0);
-    glVertex3f(10,10,10);
+    glVertex3f(Pos,Pos,Pos);
     glTexCoord2i(1,1);
-    glVertex3f(10,10,-10);
+    glVertex3f(Pos,Pos,-Pos);
     glTexCoord2i(0,1);
-    glVertex3f(-10,10,-10);
+    glVertex3f(-Pos,Pos,-Pos);
     glEnd();
     glEndList();
 
@@ -458,14 +472,17 @@ void DibujarHouseLeftSide(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(-10,-10,10);
+
+	float Pos=10.0;
+
+	glTexCoord2i(0,1);
+    glVertex3f(-Pos,-Pos,Pos);
     glTexCoord2i(1,1);
-    glVertex3f(-10,-10,-10);
+    glVertex3f(-Pos,-Pos,-Pos);
     glTexCoord2i(1,0);
-    glVertex3f(-10,10,-10);
+    glVertex3f(-Pos,Pos,-Pos);
     glTexCoord2i(0,0);
-    glVertex3f(-10,10,10);
+    glVertex3f(-Pos,Pos,Pos);
     glEnd();
     glEndList();
 
@@ -477,14 +494,17 @@ void DibujarHouseRightSide(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(10,-10,10);
+
+	float Pos=10.0;
+
+	glTexCoord2i(0,1);
+    glVertex3f(Pos,-Pos,Pos);
     glTexCoord2i(1,1);
-    glVertex3f(10,-10,-10);
+    glVertex3f(Pos,-Pos,-Pos);
     glTexCoord2i(1,0);
-    glVertex3f(10,10,-10);
+    glVertex3f(Pos,Pos,-Pos);
     glTexCoord2i(0,0);
-    glVertex3f(10,10,10);
+    glVertex3f(Pos,Pos,Pos);
     glEnd();
     glEndList();
 }
@@ -494,14 +514,17 @@ void DibujarHouseFrontSide(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(-10,-10,10);
+
+	float Pos=10.0;
+
+	glTexCoord2i(0,1);
+    glVertex3f(-Pos,-Pos,Pos);
     glTexCoord2i(1,1);
-    glVertex3f(10,-10,10);
+    glVertex3f(Pos,-Pos,Pos);
     glTexCoord2i(1,0);
-    glVertex3f(10,10,10);
+    glVertex3f(Pos,Pos,Pos);
     glTexCoord2i(0,0);
-    glVertex3f(-10,10,10);
+    glVertex3f(-Pos,Pos,Pos);
     glEnd();
     glEndList();
 }
@@ -511,14 +534,17 @@ void DibujarHouseBackSide(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
-    glTexCoord2i(0,1);
-    glVertex3f(-10,-10,-10);
+
+	float Pos=10.0;
+
+	glTexCoord2i(0,1);
+    glVertex3f(-Pos,-Pos,-Pos);
     glTexCoord2i(1,1);
-    glVertex3f(10,-10,-10);
+    glVertex3f(Pos,-Pos,-Pos);
     glTexCoord2i(1,0);
-    glVertex3f(10,10,-10);
+    glVertex3f(Pos,Pos,-Pos);
     glTexCoord2i(0,0);
-    glVertex3f(-10,10,-10);
+    glVertex3f(-Pos,Pos,-Pos);
     glEnd();
     glEndList();
 }
@@ -567,9 +593,9 @@ void DibujarCieloLeftSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,-temporal,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(-MUNDO_LARGO,-temporal,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
     glTexCoord2i(1,0);
     glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
     glTexCoord2i(0,0);
@@ -584,17 +610,13 @@ void DibujarCieloRightSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    ///glVertex3f(MUNDO_LARGO,-10,MUNDO_LARGO);//1
-    glVertex3f(MUNDO_LARGO,-temporal,-MUNDO_LARGO);//2
+    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
     glTexCoord2i(1,1);
-    ///glVertex3f(MUNDO_LARGO,-10,-MUNDO_LARGO);//2
-    glVertex3f(MUNDO_LARGO,-temporal,MUNDO_LARGO);//1
+    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
     glTexCoord2i(1,0);
-    ///glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);//3
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);//4
+    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
     glTexCoord2i(0,0);
-    ///glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);//4
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);//3
+    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -605,17 +627,13 @@ void DibujarCieloFrontSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    ///glVertex3f(-MUNDO_LARGO,-10,MUNDO_LARGO);//1
-    glVertex3f(MUNDO_LARGO,-temporal,MUNDO_LARGO);//2
+    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(-MUNDO_LARGO,-temporal,MUNDO_LARGO);//1
-    ///glVertex3f(MUNDO_LARGO,-10,MUNDO_LARGO);//2
+    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);//4
-    ///glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);//3
+    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
     glTexCoord2i(0,0);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);//3
-    ///glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);//4
+    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -626,9 +644,9 @@ void DibujarCieloBackSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,-temporal,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO,-temporal,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
     glTexCoord2i(1,0);
     glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
     glTexCoord2i(0,0);
