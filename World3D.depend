@@ -1046,7 +1046,7 @@
 
 1740541785 c:\users\ppalvarez2\documents\github\world3d\src\stbi_dds_aug_c.h
 
-1740613759 source:c:\users\ppalvarez2\documents\github\world3d\main.c
+1740672077 source:c:\users\ppalvarez2\documents\github\world3d\main.c
 	<windows.h>
 	<gl/gl.h>
 	<stdlib.h>
@@ -1056,7 +1056,7 @@
 	"midata.h"
 	"stb_image.h"
 
-1740591247 c:\users\ppalvarez2\documents\github\world3d\midata.h
+1740671683 c:\users\ppalvarez2\documents\github\world3d\midata.h
 	<windows.h>
 	<gl/gl.h>
 	<gl/glu.h>

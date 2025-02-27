@@ -23,7 +23,9 @@ float lookx=0,looky=0,lookz=-5,bb=-5; //Camera aim coordinates
 float aimdist=5; //Camera aim distance
 float posx=0,posy=0,posz=0; //Camera position coordinates
 point punto,punto2; //Cursor coordinate variables
-float unidad_mov=1.0f;// Movement unit
+float unidad_mov = 1.0f;// Movement unit
+float _bottom = -10.0;
+float slideDownSky= -50.0f; //Es usada para deslizar el cielo hacia abajo (todas las caras del cubo excepto bottom)
 
 //Window objects/structures
 WNDCLASSEX wcex;
@@ -555,15 +557,14 @@ void DibujarCieloBottom(GLuint id, GLuint texid)
     //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
-    float _bottom=10.0;
     glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO,-_bottom,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO,_bottom,MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO,-_bottom,MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO,_bottom,MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO,-_bottom,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO,_bottom,-MUNDO_LARGO);
     glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,-_bottom,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO,_bottom,-MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -575,13 +576,13 @@ void DibujarCieloTop(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
     glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -593,13 +594,13 @@ void DibujarCieloLeftSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky, MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky, -MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom+ 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
     glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom+ 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -610,13 +611,13 @@ void DibujarCieloRightSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,-MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(0,0);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -627,13 +628,13 @@ void DibujarCieloFrontSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
     glTexCoord2i(0,0);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,MUNDO_LARGO);
     glEnd();
     glEndList();
 }
@@ -644,13 +645,13 @@ void DibujarCieloBackSide(GLuint id, GLuint texid)
     glBindTexture(GL_TEXTURE_2D,texid);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1);
-    glVertex3f(-MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + slideDownSky,-MUNDO_LARGO);
     glTexCoord2i(1,1);
-    glVertex3f(MUNDO_LARGO,-MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + slideDownSky,-MUNDO_LARGO);
     glTexCoord2i(1,0);
-    glVertex3f(MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
     glTexCoord2i(0,0);
-    glVertex3f(-MUNDO_LARGO,MUNDO_LARGO,-MUNDO_LARGO);
+    glVertex3f(-MUNDO_LARGO, _bottom + 2 * MUNDO_LARGO + slideDownSky,-MUNDO_LARGO);
     glEnd();
     glEndList();
 }
