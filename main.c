@@ -162,17 +162,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SetCursor(LoadCursor(wcex.hInstance,"IDC_ARROW"));
         rotatex+=(punto2.x-(ventana_left+(ANCHO/2)))*sensibilidad_mouse; //Incrementar el angulo horizontal con la separaci'on del cursor del centro de la ventana en el eje horizontal de la pantalla
         //rotatex se puede considerar como un angulo polar y expresar el sistema en coordenadas cil'indricas
+        rotatey += invertAxisY * (float)(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
+        rotatey = ConvertAngleToRadian(rotatey);
 
         //hallar las componentes de los ejes horizontales (x, z) segun el angulo de rotacion rotatex y actualizar la direccion de la camara
         //en dichos ejes
-        lookx=posx+(int)aimdist*sin(ConvertAngleToRadian(rotatex));
-        lookz=posz-(int)aimdist*cos(ConvertAngleToRadian(rotatex));
+        lookx=posx+(float)aimdist*sin(ConvertAngleToRadian(rotatex));
+        lookz=posz-(float)aimdist*cos(ConvertAngleToRadian(rotatex));
 
         //Incrementar el angulo vertical con la separaci'on del cursor del centro de la ventana en el eje vertical de la pantalla
         //rotatey+=-float(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
-        rotatey+=-(float)(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
 
-        rotatey=ConvertAngleToRadian(rotatey);
         looky+=(float)aimdist*sin(rotatey);
         looky=max(min(looky,10),-10);
         //Note que el camera aim en el eje y tiene un m'aximo y un m'inimo

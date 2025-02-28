@@ -29,6 +29,7 @@ float aimdist=5; //Camera aim distance
 float posx=0,posy=0,posz=0; //Camera position coordinates
 point punto,punto2; //Cursor coordinate variables
 float unidad_mov = 1.0f;// Movement unit
+float invertAxisY = -1.0f; // 1.0f:false or -1.0f:true
 
 //Window objects/structures
 WNDCLASSEX wcex;
