@@ -87,50 +87,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
         }
         else
         {
-            // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-            glClearDepth(1);
-            glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//|GL_DEPTH_BUFFER_BIT
-            glClearColor(0.9,0.9,0.9,1);
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            gluLookAt(posx,posy,posz,lookx,looky,lookz,0,1,0);
+            //DrawAll();
 
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            ///glOrtho(0,ANCHO,0,ALTO,-1000,1000);
-            gluPerspective(60,1,1,5000);
-            //glLoadIdentity();
-            glPushMatrix();
-            //glDisable(GL_BLEND);
-            glEnable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
-            glDepthFunc(GL_ALWAYS);
-            //glEnable(GL_CULL_FACE);
-            glEnable(GL_FRONT_FACE);
-            //glEnable(GL_CULL_FACE);
-            //glFrontFace(GL_CW);
-            //glFrontFace(GL_CCW);
-            glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-            //glDepthFunc(GL_LEQUAL);
-
-            //Draw sky
-            DrawSky();
-
-            //glDisable(GL_DEPTH_TEST);
-            //glEnable(GL_BLEND);
-
-            //Draw home
-            glEnable(GL_DEPTH_TEST);
-            DrawHouse(0); //Draw first house
-            glDisable(GL_BLEND);
-            glDisable(GL_DEPTH_TEST);
-
-            ///Activar
-            //glEnable(GL_DEPTH_TEST);
-            //glPopMatrix();
-
-            SwapBuffers(hDC);
             Sleep (1);
         }
     }
@@ -170,13 +129,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         lookx=posx+(float)aimdist*sin(ConvertAngleToRadian(rotatex));
         lookz=posz-(float)aimdist*cos(ConvertAngleToRadian(rotatex));
 
-        //Incrementar el angulo vertical con la separaci'on del cursor del centro de la ventana en el eje vertical de la pantalla
-        //rotatey+=-float(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
-
         looky+=(float)aimdist*sin(rotatey);
         looky=max(min(looky,10),-10);
-        //Note que el camera aim en el eje y tiene un m'aximo y un m'inimo
-        ///Para un mejor funcionamiento, ser'ia recomendable implementar el funcionamiento usando coordenadas esf'ericas en vez de cil'indricas
+
 
         //Set the cursor in the center of the window
         SetCursorPos((ventana_left+ANCHO)/2,(ventana_top+ALTO)/2);
