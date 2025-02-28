@@ -88,7 +88,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
         else
         {
 
-            //DrawAll();
+            DrawAll();
 
             Sleep (1);
         }
@@ -198,6 +198,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
         }
 
+        DrawAll();
+
         //See some important variables
         printf("looky %f lookx %f lookz %f     posx %f posz %f\n",looky,lookx,lookz,posx,posz);
 
@@ -208,6 +210,55 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
+}
+
+void DrawAll()
+{
+    // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearDepth(1);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//|GL_DEPTH_BUFFER_BIT
+    glClearColor(0.9,0.9,0.9,1);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(posx,posy,posz,lookx,looky,lookz,0,1,0);
+    //gluLookAt(lookx,looky,lookz,posx,posy,posz,0,1,0);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    ///glOrtho(0,ANCHO,0,ALTO,-1000,1000);
+    gluPerspective(60,1,1,5000);
+    //glLoadIdentity();
+    glPushMatrix();
+    //glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glDepthFunc(GL_ALWAYS);
+    //glEnable(GL_CULL_FACE);
+    glEnable(GL_FRONT_FACE);
+    //glEnable(GL_CULL_FACE);
+    //glFrontFace(GL_CW);
+    //glFrontFace(GL_CCW);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    //glDepthFunc(GL_LEQUAL);
+
+    //Draw sky
+    DrawSky();
+
+    //glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_BLEND);
+
+    //Draw home
+    glEnable(GL_DEPTH_TEST);
+    DrawHouse(0); //Draw first house
+    glDisable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+
+    ///Activar
+    //glEnable(GL_DEPTH_TEST);
+    //glPopMatrix();
+
+    SwapBuffers(hDC);
 }
 
 
