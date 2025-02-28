@@ -173,15 +173,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case 'W':
         case VK_UP:
             //printf("Grado rotx in deg: %f  Grado rotx in rad: %f\n",rotatex,ConvertAngleToRadian(rotatex));
-            posx+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
-            posz+=-unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            posx+=unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            posz+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            //Also change look at
+            lookx+=unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            lookz+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+
         break;
 
         //Move back
         case 'S':
         case VK_DOWN:
-            posx-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
-            posz-=-unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            posx-=unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            posz-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            //Also change look at
+            lookx-=unidad_mov*cos(ConvertAngleToRadian(rotatex));
+            lookz-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
         break;
 
         //Aim camera manually
