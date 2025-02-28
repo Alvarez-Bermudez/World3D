@@ -126,8 +126,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         //hallar las componentes de los ejes horizontales (x, z) segun el angulo de rotacion rotatex y actualizar la direccion de la camara
         //en dichos ejes
-        lookx=posx+(float)aimdist*sin(ConvertAngleToRadian(rotatex));
-        lookz=posz-(float)aimdist*cos(ConvertAngleToRadian(rotatex));
+        lookx = posx + (float)aimdist*cos(ConvertAngleToRadian(rotatex));
+        lookz = posz + (float)aimdist*sin(ConvertAngleToRadian(rotatex));
 
         looky+=(float)aimdist*sin(rotatey);
         looky=max(min(looky,10),-10);
@@ -149,6 +149,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             PostQuitMessage(0);
         break;
 
+        case 'H':
+            posx+=unidad_mov;
+        break;
         ///Move body
         //Las teclas A,S,D y W solo desplazan la c'amara horizontalmente (axes x and z)
         //Move left
