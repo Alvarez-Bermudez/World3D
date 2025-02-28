@@ -151,6 +151,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case 'H':
             posx+=unidad_mov;
+            lookx+=unidad_mov;
         break;
         ///Move body
         //Las teclas A,S,D y W solo desplazan la c'amara horizontalmente (axes x and z)
