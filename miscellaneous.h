@@ -4,14 +4,18 @@
 #include <math.h>
 
 
-float ConvertAngleToRadian(int angle);
+float ConvertAngleToRadian(float);
+float ConvertAngleToDegree(float);
 
 
-
-float ConvertAngleToRadian(int angle)
+float ConvertAngleToRadian(float degree)
 {
-    return ((float)angle) * M_PI / 180.0f;
+    return degree * M_PI / 180.0f;
 }
 
+float ConvertAngleToDegree(float radian)
+{
+    return 180.0f * radian / M_PI;
+}
 
 #endif // MISCELLANEOUS_H_INCLUDED

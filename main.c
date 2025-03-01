@@ -119,15 +119,19 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetCursorPos(&punto2);
 
         SetCursor(LoadCursor(wcex.hInstance,"IDC_ARROW"));
+        
+        rotatex = ConvertAngleToDegree(rotatex);
         rotatex+=(punto2.x-(ventana_left+(ANCHO/2)))*sensibilidad_mouse; //Incrementar el angulo horizontal con la separaci'on del cursor del centro de la ventana en el eje horizontal de la pantalla
+        rotatex = ConvertAngleToRadian(rotatex);
+
         //rotatex se puede considerar como un angulo polar y expresar el sistema en coordenadas cil'indricas
         rotatey += invertAxisY * (float)(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
         rotatey = ConvertAngleToRadian(rotatey);
 
         //hallar las componentes de los ejes horizontales (x, z) segun el angulo de rotacion rotatex y actualizar la direccion de la camara
         //en dichos ejes
-        lookx = posx + (float)aimdist*cos(ConvertAngleToRadian(rotatex));
-        lookz = posz + (float)aimdist*sin(ConvertAngleToRadian(rotatex));
+        lookx = posx + (float)aimdist*cos(rotatex);
+        lookz = posz + (float)aimdist*sin(rotatex);
 
         looky+=(float)aimdist*sin(rotatey);
         looky=max(min(looky,10),-10);
@@ -158,37 +162,37 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         //Move left
         case 'A':
         case VK_LEFT:
-            posx-=unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posz-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            posx-=unidad_mov*sin(rotatex);
+            posz-=unidad_mov*cos(rotatex);
         break;
 
         //Move right
         case 'D':
         case VK_RIGHT:
-            posx+=unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posz+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            posx+=unidad_mov*sin(rotatex);
+            posz+=unidad_mov*cos(rotatex);
         break;
 
         //Move forward
         case 'W':
         case VK_UP:
-            //printf("Grado rotx in deg: %f  Grado rotx in rad: %f\n",rotatex,ConvertAngleToRadian(rotatex));
-            posx+=unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posz+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            //printf("Grado rotx in deg: %f  Grado rotx in rad: %f\n",rotatex,rotatex);
+            posx+=unidad_mov*cos(rotatex);
+            posz+=unidad_mov*sin(rotatex);
             //Also change look at
-            lookx+=unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            lookz+=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            lookx+=unidad_mov*cos(rotatex);
+            lookz+=unidad_mov*sin(rotatex);
 
         break;
 
         //Move back
         case 'S':
         case VK_DOWN:
-            posx-=unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            posz-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            posx-=unidad_mov*cos(rotatex);
+            posz-=unidad_mov*sin(rotatex);
             //Also change look at
-            lookx-=unidad_mov*cos(ConvertAngleToRadian(rotatex));
-            lookz-=unidad_mov*sin(ConvertAngleToRadian(rotatex));
+            lookx-=unidad_mov*cos(rotatex);
+            lookz-=unidad_mov*sin(rotatex);
         break;
 
         //Aim camera manually
@@ -212,7 +216,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         DrawAll();
 
         //See some important variables
-        printf("looky %f lookx %f lookz %f     posx %f posz %f\n",looky,lookx,lookz,posx,posz);
+        printf("rotx %f, looky %f lookx %f lookz %f, posx %f posz %f\n",rotatex,looky,lookx,lookz,posx,posz);
 
     break;
 
