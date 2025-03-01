@@ -163,15 +163,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         //Move left
         case 'A':
         case VK_LEFT:
-            posx-=unidad_mov*sin(rotatex);
+            posx+=unidad_mov*sin(rotatex);
             posz-=unidad_mov*cos(rotatex);
+            //Also change looking at variables
+            lookx+=unidad_mov*sin(rotatex);
+            lookz-=unidad_mov*cos(rotatex);
+
         break;
 
         //Move right
         case 'D':
         case VK_RIGHT:
-            posx+=unidad_mov*sin(rotatex);
+            posx-=unidad_mov*sin(rotatex);
             posz+=unidad_mov*cos(rotatex);
+            //Also change looking at variables
+            lookx-=unidad_mov*sin(rotatex);
+            lookz+=unidad_mov*cos(rotatex);
+
         break;
 
         //Move forward
@@ -180,7 +188,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             //printf("Grado rotx in deg: %f  Grado rotx in rad: %f\n",rotatex,rotatex);
             posx+=unidad_mov*cos(rotatex);
             posz+=unidad_mov*sin(rotatex);
-            //Also change look at
+            //Also change looking at variables
             lookx+=unidad_mov*cos(rotatex);
             lookz+=unidad_mov*sin(rotatex);
 
@@ -191,7 +199,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case VK_DOWN:
             posx-=unidad_mov*cos(rotatex);
             posz-=unidad_mov*sin(rotatex);
-            //Also change look at
+            //Also change looking at variables
             lookx-=unidad_mov*cos(rotatex);
             lookz-=unidad_mov*sin(rotatex);
         break;
