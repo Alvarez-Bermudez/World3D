@@ -46,7 +46,13 @@ void DibujarCieloRightSide(GLuint id, GLuint texid);
 void DibujarCieloFrontSide(GLuint id, GLuint texid);
 void DibujarCieloBackSide(GLuint id, GLuint texid);
 
+void BuildHouse(float, float, float, float, int);
 
+
+void BuildHouse(float x, float y, float z, float edge, int numberHouse)
+{
+    printf("nothing");
+}
 
 void DrawHouse(int numberHouse)
 {
