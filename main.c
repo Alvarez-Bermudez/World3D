@@ -119,22 +119,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetCursorPos(&punto2);
 
         SetCursor(LoadCursor(wcex.hInstance,"IDC_ARROW"));
-        
-        rotatex = ConvertAngleToDegree(rotatex);
-        rotatex+=(punto2.x-(ventana_left+(ANCHO/2)))*sensibilidad_mouse; //Incrementar el angulo horizontal con la separaci'on del cursor del centro de la ventana en el eje horizontal de la pantalla
-        rotatex = ConvertAngleToRadian(rotatex);
 
+        rotatex = ConvertAngleToDegree(rotatex);
+        rotatex +=(punto2.x-(ventana_left+(ANCHO/2)))*sensibilidad_mouse; //Incrementar el angulo horizontal con la separaci'on del cursor del centro de la ventana en el eje horizontal de la pantalla
+        rotatex = ConvertAngleToRadian(rotatex);
         //rotatex se puede considerar como un angulo polar y expresar el sistema en coordenadas cil'indricas
+
+        rotatey = ConvertAngleToDegree(rotatey);
         rotatey += invertAxisY * (float)(punto2.y-(ventana_top+ALTO/2))*sensibilidad_mouse;
         rotatey = ConvertAngleToRadian(rotatey);
+        rotatey = max(min(M_PI / 2.0f, rotatey), -M_PI / 2.0f);
 
         //hallar las componentes de los ejes horizontales (x, z) segun el angulo de rotacion rotatex y actualizar la direccion de la camara
         //en dichos ejes
         lookx = posx + (float)aimdist*cos(rotatex);
         lookz = posz + (float)aimdist*sin(rotatex);
-
-        looky+=(float)aimdist*sin(rotatey);
-        looky=max(min(looky,10),-10);
+        
+        looky = posy + (float)aimdist*sin(rotatey);
 
 
         //Set the cursor in the center of the window
@@ -158,7 +159,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             lookx+=unidad_mov;
         break;
         ///Move body
-        //Las teclas A,S,D y W solo desplazan la c'amara horizontalmente (axes x and z)
+        //Las teclas A,S,D y W solo desplazan la c'amara horizontalmente (x and z axes)
         //Move left
         case 'A':
         case VK_LEFT:
