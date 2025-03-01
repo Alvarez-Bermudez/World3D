@@ -1046,7 +1046,7 @@
 
 1740541785 c:\users\ppalvarez2\documents\github\world3d\src\stbi_dds_aug_c.h
 
-1740783662 source:c:\users\ppalvarez2\documents\github\world3d\main.c
+1740849262 source:c:\users\ppalvarez2\documents\github\world3d\main.c
 	<windows.h>
 	<gl/gl.h>
 	<stdlib.h>
@@ -1102,6 +1102,6 @@
 	"stb_image.h"
 	"settings.h"
 
-1740682417 c:\users\ppalvarez2\documents\github\world3d\miscellaneous.h
+1740847234 c:\users\ppalvarez2\documents\github\world3d\miscellaneous.h
 	<math.h>
 

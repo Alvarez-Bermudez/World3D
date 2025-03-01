@@ -16,7 +16,6 @@ En mi caso la ruta para estas librerías fueron:
 "C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglaux.a".  
 Pero si no es tu caso, deberías encontrar estas librerías en la carpeta "/lib" de tu compilador.  
 
-
 ## Algunas indicaciones
 
 - Controles
@@ -29,6 +28,11 @@ Pero si no es tu caso, deberías encontrar estas librerías en la carpeta "/lib"
 | Mover hacia adelante | Up Arrow / W |
 | Mover hacia atrás | Down Arrow / S |   
 
+## Screenshots
+
+![screen](https://github.com/Alvarez-Bermudez/World3D/blob/main/screenshots/screenshot001.png)  
+![screen](https://github.com/Alvarez-Bermudez/World3D/blob/main/screenshots/screenrecorder001.gif)  
+  
 Si necesitas alguna aclaración, puedes contactarme. En mi página de perfil aparecen mis contactos (https://github.com/Alvarez-Bermudez)  
 ... Espero que te diviertas usándolo😆! ¡Gracias!!! 
 
