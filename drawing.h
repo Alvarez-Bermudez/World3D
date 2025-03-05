@@ -49,21 +49,58 @@ void DibujarCieloBackSide(GLuint id, GLuint texid);
 void BuildHouse(float, float, float, float, int);
 
 
-void BuildHouse(float x, float y, float z, float edge, int numberHouse)
+void BuildHouse(float center_x, float floor_y, float center_z, float edge, int numberHouse)
 {
     printf("nothing");
+    BuildHouseFrontSide(carasHouse[numberHouse][FrontSide],texCarasHouse[numberHouse][FrontSide],center_x,floor_y,center_z,edge, numberHouse);
+
 }
 
+
+void BuildHouseFrontSide(GLuint id, GLuint texid, float center_x, float floor_y, float center_z, float edge, float numberHouse)
+{
+    //Door side
+    glNewList(id, GL_COMPILE);
+    //321glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glBindTexture(GL_TEXTURE_2D,texid);
+
+    float x = center_x + edge / 2.0; //Note there is a adittion here
+	float Pos=10.0f;
+    //Z axis division sections
+    float a = center_z + edge / 2.0;
+    float b = a - 0.56f * edge;
+    float c = b - 0.35f * edge;
+    float d = a - edge;
+
+    float heightDoor = 0.85f * edge + floor_y;
+
+    glBegin(GL_POLYGON);
+	glTexCoord2i(1,1);//Textures
+    glVertex3f(x,-Pos,Pos);
+    glTexCoord2i(0,1);
+    glVertex3f(Pos,-Pos,-Pos);
+    glTexCoord2i(0,0);
+    glVertex3f(Pos,Pos,-Pos);
+    glTexCoord2i(1,0);
+    glVertex3f(Pos,Pos,Pos);
+    glEnd();
+
+    glEndList();
+}
 void DrawHouse(int numberHouse)
 {
     if (numberHouse > NUMBER_HOUSES) return;
 
     glCallList(carasHouse[numberHouse][Bottom]);
     glCallList(carasHouse[numberHouse][Top]);
-    glCallList(carasHouse[numberHouse][LeftSide]);
-    glCallList(carasHouse[numberHouse][RightSide]);
+
     glCallList(carasHouse[numberHouse][FrontSide]);
     glCallList(carasHouse[numberHouse][BackSide]);
+
+    glCallList(carasHouse[numberHouse][RightSide]);
+    glCallList(carasHouse[numberHouse][LeftSide]);
+
+
 }
 
 void DrawSky()
@@ -149,13 +186,13 @@ void DibujarHouseRightSide(GLuint id, GLuint texid)
 
 	float Pos=10.0;
 
-	glTexCoord2i(0,1);
+	glTexCoord2i(1,1);
     glVertex3f(Pos,-Pos,Pos);
-    glTexCoord2i(1,1);
+    glTexCoord2i(0,1);
     glVertex3f(Pos,-Pos,-Pos);
-    glTexCoord2i(1,0);
-    glVertex3f(Pos,Pos,-Pos);
     glTexCoord2i(0,0);
+    glVertex3f(Pos,Pos,-Pos);
+    glTexCoord2i(1,0);
     glVertex3f(Pos,Pos,Pos);
     glEnd();
     glEndList();

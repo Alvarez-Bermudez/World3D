@@ -29,7 +29,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
     punto.x=(ventana_left+ANCHO)/2;
     punto.y=(ventana_top+ALTO)/2;
-    //ClientToScreen(hwnd,&punto);    
+    //ClientToScreen(hwnd,&punto);
     SetCursorPos(punto.x,punto.y);
 
     /* register window class */
@@ -139,7 +139,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         //en dichos ejes
         lookx = posx + (float)aimdist*cos(rotatex);
         lookz = posz + (float)aimdist*sin(rotatex);
-        
+
         looky = posy + (float)aimdist*sin(rotatey);
 
 
@@ -248,30 +248,84 @@ void DrawAll()
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//|GL_DEPTH_BUFFER_BIT
     glClearColor(0.9,0.9,0.9,1);
 
+
+    /*glMatrixMode(GL_MODELVIEW);
+glLoadIdentity();
+gluLookAt(posx, posy, posz, lookx, looky, lookz, 0, 1, 0);
+
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+gluPerspective(60, 1, 1, 5000);
+
+glEnable(GL_DEPTH_TEST);
+//glDepthFunc(GL_LEQUAL);
+
+glPushMatrix();
+DrawSky();
+//DrawHouse(0); // Dibujar la primera casa
+glPopMatrix();
+
+glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+// Dibujar objetos transparentes
+glPushMatrix();
+
+DrawHouse(0);
+// Aquí puedes dibujar tus objetos transparentes
+// Ejemplo: DrawTransparentObject();
+glPopMatrix();
+
+
+
+// Deshabilitar el Blending
+glDisable(GL_BLEND);
+
+
+
+SwapBuffers(hDC);
+*/
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
+
     gluLookAt(posx,posy,posz,lookx,looky,lookz,0,1,0);
-    
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     ///glOrtho(0,ANCHO,0,ALTO,-1000,1000);
     gluPerspective(60,1,1,5000);
     //glLoadIdentity();
-    
-    glPushMatrix();
+
+
     glEnable(GL_DEPTH_TEST);
 
-    //glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
+
+	// Configura el blending
 
     //Draw sky
+    glDepthMask(GL_FALSE);
+    glPushMatrix();
     DrawSky();
 
+    glPopMatrix();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	///glDepthMask(GL_FALSE);
     //Draw houses
+
+
+    glPushMatrix();
     DrawHouse(0); //Draw first house
-    
-    glDisable(GL_DEPTH_TEST);
-    //glPopMatrix();
+    glPopMatrix();
+	glDepthMask(GL_TRUE);
+
+    //glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
 
     SwapBuffers(hDC);
 }

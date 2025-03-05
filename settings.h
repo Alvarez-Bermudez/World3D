@@ -24,7 +24,7 @@ typedef struct
 float rotatex=0, rotatey=0; //Rotation angles
 float sensibilidad_mouse=0.2f; //Mouse sensitivity
 int ventana_left=0,ventana_top=0; //Some window position variables
-float lookx=0,looky=0,lookz=-5,bb=-5; //Camera aim coordinates
+float lookx=-10.0,looky=10.0,lookz=10.0,bb=-5; //Camera aim coordinates
 float aimdist=5; //Camera aim distance
 float posx=0,posy=0,posz=0; //Camera position coordinates
 point punto,punto2; //Cursor coordinate variables
