@@ -58,19 +58,82 @@ void BuildHouseFrontSide(GLuint, GLuint, float, float, float, float);
 void BuildHouseLeftSide(GLuint, GLuint, float, float, float, float);
 void BuildHouseRightSide(GLuint, GLuint, float, float, float, float);
 void BuildHouseBackSide(GLuint, GLuint, float, float, float, float);
+void BuildHouseTop(GLuint, GLuint, float, float, float, float);
 
 void BuildHouse(float center_x, float floor_y, float center_z, float edge, int numberHouse)
 {
     printf("nothing");
     BuildHouseFrontSide(carasHouse[numberHouse][FrontSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
     BuildHouseLeftSide(carasHouse[numberHouse][LeftSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
-    BuildHouseLeftSide(carasHouse[numberHouse][RightSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
+    BuildHouseRightSide(carasHouse[numberHouse][RightSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
     BuildHouseBackSide(carasHouse[numberHouse][BackSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
+    BuildHouseTop(carasHouse[numberHouse][Top], texCarasHouse[numberHouse][Top], center_x, floor_y, center_z, edge);
+}
+
+void BuildHouseTop(GLuint id, GLuint texid, float center_x, float floor_y, float center_z, float edge)
+{
+    //Horizontal plane variables
+    float extra = edge * 0.08;
+    float az = center_z + edge / 2.0 + extra, ax = center_x + edge / 2.0 + extra;
+    float bz = center_z - edge / 2.0 - extra, bx = center_x + edge / 2.0 + extra;
+    float cz = center_z - edge / 2.0 - extra, cx = center_x - edge / 2.0 - extra;
+    float dz = center_z + edge / 2.0 + extra, dx = center_x - edge / 2.0 - extra;
+
+    //Vertical variable
+    float top=floor_y+edge + edge*0.42f;
+    float bottom=floor_y+edge - edge*0.06f;
+
+
+    glNewList(id, GL_COMPILE);
+
+    glBindTexture(GL_TEXTURE_2D, texid);
+
+    //AB triangle face
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1, 1); // Textures
+    glVertex3f(bx,bottom, bz);
+    glTexCoord2f(0, 1);
+    glVertex3f(ax, bottom, az);
+    glTexCoord2f(0.5, 0.5);
+    glVertex3f(center_x, top, center_z);
+    glEnd();
+
+    //BC triangle face
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1, 1); // Textures
+    glVertex3f(bx,bottom, bz);
+    glTexCoord2f(0, 1);
+    glVertex3f(cx, bottom, cz);
+    glTexCoord2f(0.5, 0.5);
+    glVertex3f(center_x, top, center_z);
+    glEnd();
+
+    //CD triangle face
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1, 1); // Textures
+    glVertex3f(cx,bottom, cz);
+    glTexCoord2f(0, 1);
+    glVertex3f(dx, bottom, dz);
+    glTexCoord2f(0.5, 0.5);
+    glVertex3f(center_x, top, center_z);
+    glEnd();
+
+    //DA triangle face
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1, 1); // Textures
+    glVertex3f(dx,bottom, dz);
+    glTexCoord2f(0, 1);
+    glVertex3f(ax, bottom, az);
+    glTexCoord2f(0.5, 0.5);
+    glVertex3f(center_x, top, center_z);
+    glEnd();
+
+
+    glEndList();
 }
 
 void BuildHouseBackSide(GLuint id, GLuint texid, float center_x, float floor_y, float center_z, float edge)
 {
-    // Door side
     float x = center_x - edge / 2.0;
     // Z axis division sections
     float a = center_z - edge / 2.0;
