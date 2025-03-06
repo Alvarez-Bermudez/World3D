@@ -63,7 +63,6 @@ void BuildHouseBottom(GLuint, GLuint, float, float, float, float);
 
 void BuildHouse(float center_x, float floor_y, float center_z, float edge, int numberHouse)
 {
-    printf("nothing");
     BuildHouseFrontSide(carasHouse[numberHouse][FrontSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
     BuildHouseLeftSide(carasHouse[numberHouse][LeftSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
     BuildHouseRightSide(carasHouse[numberHouse][RightSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);

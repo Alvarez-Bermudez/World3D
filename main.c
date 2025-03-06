@@ -298,8 +298,14 @@ SwapBuffers(hDC);
     glPopMatrix();
 
     glPushMatrix();
-    DrawHouse(0); // Draw first house
+    for (int i=0;i<NUMBER_HOUSES;i++){
+        DrawHouse(i);
+    }
     glPopMatrix();
+
+    //glPushMatrix();
+    //DrawHouse(1); // Draw second house
+    //glPopMatrix();
 
     SwapBuffers(hDC);
 }

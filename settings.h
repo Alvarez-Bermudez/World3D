@@ -57,38 +57,43 @@ void initWorld3D_GLObjects()
 
     int currentHouse = 0;
 
-    // Loading textures of the house_i
-    // For now only one
-    glGenTextures(TOTAL_CARAS, texCarasHouse[currentHouse]);
-    char strPath[200];
-    sprintf(strPath, "res/image/house_%d/suelo.png", currentHouse);
-    cargarTextura(texCarasHouse[currentHouse][Bottom], strPath);
+    for (; currentHouse < NUMBER_HOUSES; currentHouse++)
+    {
+        // Loading textures of the house_i
+        // For now only one
+        glGenTextures(TOTAL_CARAS, texCarasHouse[currentHouse]);
+        char strPath[200];
+        sprintf(strPath, "res/image/house_%d/suelo.png", currentHouse);
+        cargarTextura(texCarasHouse[currentHouse][Bottom], strPath);
 
-    sprintf(strPath, "res/image/house_%d/techo.png", currentHouse);
-    cargarTextura(texCarasHouse[currentHouse][Top], strPath);
+        sprintf(strPath, "res/image/house_%d/techo.png", currentHouse);
+        cargarTextura(texCarasHouse[currentHouse][Top], strPath);
 
-    sprintf(strPath, "res/image/house_%d/cara1.png", currentHouse);
-    cargarTextura(texCarasHouse[currentHouse][LeftSide], strPath);
+        sprintf(strPath, "res/image/house_%d/cara1.png", currentHouse);
+        cargarTextura(texCarasHouse[currentHouse][LeftSide], strPath);
 
-    // sprintf(strPath, "res/image/house_%d/cara2.png", currentHouse);
-    // cargarTextura(texCarasHouse[currentHouse][RightSide], strPath);
+        // sprintf(strPath, "res/image/house_%d/cara2.png", currentHouse);
+        // cargarTextura(texCarasHouse[currentHouse][RightSide], strPath);
 
-    sprintf(strPath, "res/image/house_%d/cara3.png", currentHouse);
-    cargarTextura(texCarasHouse[currentHouse][FrontSide], strPath);
+        sprintf(strPath, "res/image/house_%d/cara3.png", currentHouse);
+        cargarTextura(texCarasHouse[currentHouse][FrontSide], strPath);
 
-    // sprintf(strPath, "res/image/house_%d/cara4.png", currentHouse);
-    // cargarTextura(texCarasHouse[currentHouse][BackSide], strPath);
+        // sprintf(strPath, "res/image/house_%d/cara4.png", currentHouse);
+        // cargarTextura(texCarasHouse[currentHouse][BackSide], strPath);
 
-    carasHouse[currentHouse][Bottom] = glGenLists(TOTAL_CARAS);
-    carasHouse[currentHouse][Top] = carasHouse[currentHouse][Bottom] + 1;
-    carasHouse[currentHouse][LeftSide] = carasHouse[currentHouse][Bottom] + 2;
-    carasHouse[currentHouse][RightSide] = carasHouse[currentHouse][Bottom] + 3;
-    carasHouse[currentHouse][FrontSide] = carasHouse[currentHouse][Bottom] + 4;
-    carasHouse[currentHouse][BackSide] = carasHouse[currentHouse][Bottom] + 5;
-    // DibujarHouseBottom(carasHouse[currentHouse][Bottom],texCarasHouse[currentHouse][Bottom]);
+        carasHouse[currentHouse][Bottom] = glGenLists(TOTAL_CARAS);
+        carasHouse[currentHouse][Top] = carasHouse[currentHouse][Bottom] + 1;
+        carasHouse[currentHouse][LeftSide] = carasHouse[currentHouse][Bottom] + 2;
+        carasHouse[currentHouse][RightSide] = carasHouse[currentHouse][Bottom] + 3;
+        carasHouse[currentHouse][FrontSide] = carasHouse[currentHouse][Bottom] + 4;
+        carasHouse[currentHouse][BackSide] = carasHouse[currentHouse][Bottom] + 5;
+    }
 
     BuildHouse(5.00, _bottom, -13.0, 20.0, 0);
+    BuildHouse(28.0, _bottom, 36.00, 20.0, 1);
+    BuildHouse(103.0, _bottom, -36.00, 20.0, 2);
 
+    // DibujarHouseBottom(carasHouse[currentHouse][Bottom],texCarasHouse[currentHouse][Bottom]);
     /*DibujarHouseTop(carasHouse[currentHouse][Top], texCarasHouse[currentHouse][Top]);
     DibujarHouseLeftSide(carasHouse[currentHouse][LeftSide], texCarasHouse[currentHouse][LeftSide]);
     DibujarHouseRightSide(carasHouse[currentHouse][RightSide], texCarasHouse[currentHouse][FrontSide]);

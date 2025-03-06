@@ -1046,7 +1046,7 @@
 
 1740541785 c:\users\ppalvarez2\documents\github\world3d\src\stbi_dds_aug_c.h
 
-1741219370 source:c:\users\ppalvarez2\documents\github\world3d\main.c
+1741246619 source:c:\users\ppalvarez2\documents\github\world3d\main.c
 	<windows.h>
 	<gl/gl.h>
 	<stdlib.h>
@@ -1083,7 +1083,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1741238844 c:\users\ppalvarez2\documents\github\world3d\settings.h
+1741246652 c:\users\ppalvarez2\documents\github\world3d\settings.h
 	<windows.h>
 	<gl/gl.h>
 	<gl/glext.h>
@@ -1091,7 +1091,7 @@
 	"miscellaneous.h"
 	"stb_image.h"
 
-1741239211 c:\users\ppalvarez2\documents\github\world3d\drawing.h
+1741246427 c:\users\ppalvarez2\documents\github\world3d\drawing.h
 	<gl/gl.h>
 	<gl/glu.h>
 	<stdio.h>
