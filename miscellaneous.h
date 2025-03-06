@@ -3,10 +3,8 @@
 
 #include <math.h>
 
-
 float ConvertAngleToRadian(float);
 float ConvertAngleToDegree(float);
-
 
 float ConvertAngleToRadian(float degree)
 {
