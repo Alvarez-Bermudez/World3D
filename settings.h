@@ -2,6 +2,7 @@
 #define SETTINGS_H_INCLUDED
 
 #include <windows.h>
+#include <time.h>
 #include <gl/gl.h>
 #include <gl/glext.h>
 #include "drawing.h"
@@ -51,6 +52,7 @@ void initWorld3D_GLObjects();
 
 void initWorld3D_GLObjects()
 {
+    srand(time(NULL));
     // glEnable(GL_BLEND);
     // glEnable(GL_DEPTH_TEST);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);

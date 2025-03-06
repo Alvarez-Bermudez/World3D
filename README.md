@@ -23,17 +23,17 @@ Pero si no es tu caso, deberías encontrar estas librerías en la carpeta "/lib"
 | Descripción | Tecla |
 |---|---|
 | Dirigir objetivo cámara | (Mouse control) |
-| Mover izquierda | Left Arrow / A |
-| Mover derecha | Right Arrow / D |
 | Mover hacia adelante | Up Arrow / W |
-| Mover hacia atrás | Down Arrow / S |   
-
+| Mover hacia atrás | Down Arrow / S | 
+| Mover izquierda | Left Arrow / A |
+| Mover derecha | Right Arrow / D |  
+  
 ## Screenshots
 
 ![screen](https://github.com/Alvarez-Bermudez/World3D/blob/main/screenshots/screenshot001.png)  
-![screen](https://github.com/Alvarez-Bermudez/World3D/blob/main/screenshots/screenrecorder001.gif)  
-  
-Si necesitas alguna aclaración, puedes contactarme. En mi página de perfil aparecen mis contactos (https://github.com/Alvarez-Bermudez)  
+![screen](https://github.com/Alvarez-Bermudez/World3D/blob/main/screenshots/screenrecorder001.gif)    
+![screen](https://github.com/Alvarez-Bermudez/World3D/blob/main/screenshots/screenrecorder002.gif)  
+   
 ... Espero que te diviertas usándolo😆! ¡Gracias!!! 
 
 
