@@ -59,6 +59,7 @@ void BuildHouseLeftSide(GLuint, GLuint, float, float, float, float);
 void BuildHouseRightSide(GLuint, GLuint, float, float, float, float);
 void BuildHouseBackSide(GLuint, GLuint, float, float, float, float);
 void BuildHouseTop(GLuint, GLuint, float, float, float, float);
+void BuildHouseBottom(GLuint, GLuint, float, float, float, float);
 
 void BuildHouse(float center_x, float floor_y, float center_z, float edge, int numberHouse)
 {
@@ -68,66 +69,92 @@ void BuildHouse(float center_x, float floor_y, float center_z, float edge, int n
     BuildHouseRightSide(carasHouse[numberHouse][RightSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
     BuildHouseBackSide(carasHouse[numberHouse][BackSide], texCarasHouse[numberHouse][LeftSide], center_x, floor_y, center_z, edge);
     BuildHouseTop(carasHouse[numberHouse][Top], texCarasHouse[numberHouse][Top], center_x, floor_y, center_z, edge);
+    // BuildHouseBottom(carasHouse[numberHouse][Bottom], texCarasHouse[numberHouse][Bottom], center_x, floor_y, center_z, edge);
+}
+
+void BuildHouseBottom(GLuint id, GLuint texid, float center_x, float floor_y, float center_z, float edge)
+{
+    // Horizontal plane variables
+    float az = center_z + edge / 2.0, ax = center_x + edge / 2.0;
+    float bz = center_z - edge / 2.0, bx = center_x + edge / 2.0;
+    float cz = center_z - edge / 2.0, cx = center_x - edge / 2.0;
+    float dz = center_z + edge / 2.0, dx = center_x - edge / 2.0;
+
+    glNewList(id, GL_COMPILE);
+
+    glBindTexture(GL_TEXTURE_2D, texid);
+
+    // AB triangle face
+    glBegin(GL_POLYGON);
+    glTexCoord2f(1, 1);
+    glVertex3f(ax, floor_y, az);
+    glTexCoord2f(0, 1);
+    glVertex3f(bx, floor_y, bz);
+    glTexCoord2f(0, 0);
+    glVertex3f(cx, floor_y, cz);
+    glTexCoord2f(1, 0);
+    glVertex3f(dx, floor_y, dz);
+    glEnd();
+
+    glEndList();
 }
 
 void BuildHouseTop(GLuint id, GLuint texid, float center_x, float floor_y, float center_z, float edge)
 {
-    //Horizontal plane variables
+    // Horizontal plane variables
     float extra = edge * 0.08;
     float az = center_z + edge / 2.0 + extra, ax = center_x + edge / 2.0 + extra;
     float bz = center_z - edge / 2.0 - extra, bx = center_x + edge / 2.0 + extra;
     float cz = center_z - edge / 2.0 - extra, cx = center_x - edge / 2.0 - extra;
     float dz = center_z + edge / 2.0 + extra, dx = center_x - edge / 2.0 - extra;
 
-    //Vertical variable
-    float top=floor_y+edge + edge*0.42f;
-    float bottom=floor_y+edge - edge*0.06f;
-
+    // Vertical variable
+    float top = floor_y + edge + edge * 0.42f;
+    float bottom = floor_y + edge - edge * 0.06f;
 
     glNewList(id, GL_COMPILE);
 
     glBindTexture(GL_TEXTURE_2D, texid);
 
-    //AB triangle face
+    // AB triangle face
     glBegin(GL_POLYGON);
-    glTexCoord2f(1, 1); // Textures
-    glVertex3f(bx,bottom, bz);
+    glTexCoord2f(1, 1);
+    glVertex3f(bx, bottom, bz);
     glTexCoord2f(0, 1);
     glVertex3f(ax, bottom, az);
     glTexCoord2f(0.5, 0.5);
     glVertex3f(center_x, top, center_z);
     glEnd();
 
-    //BC triangle face
+    // BC triangle face
     glBegin(GL_POLYGON);
-    glTexCoord2f(1, 1); // Textures
-    glVertex3f(bx,bottom, bz);
+    glTexCoord2f(1, 1);
+    glVertex3f(bx, bottom, bz);
     glTexCoord2f(0, 1);
     glVertex3f(cx, bottom, cz);
     glTexCoord2f(0.5, 0.5);
     glVertex3f(center_x, top, center_z);
     glEnd();
 
-    //CD triangle face
+    // CD triangle face
     glBegin(GL_POLYGON);
-    glTexCoord2f(1, 1); // Textures
-    glVertex3f(cx,bottom, cz);
+    glTexCoord2f(1, 1);
+    glVertex3f(cx, bottom, cz);
     glTexCoord2f(0, 1);
     glVertex3f(dx, bottom, dz);
     glTexCoord2f(0.5, 0.5);
     glVertex3f(center_x, top, center_z);
     glEnd();
 
-    //DA triangle face
+    // DA triangle face
     glBegin(GL_POLYGON);
-    glTexCoord2f(1, 1); // Textures
-    glVertex3f(dx,bottom, dz);
+    glTexCoord2f(1, 1);
+    glVertex3f(dx, bottom, dz);
     glTexCoord2f(0, 1);
     glVertex3f(ax, bottom, az);
     glTexCoord2f(0.5, 0.5);
     glVertex3f(center_x, top, center_z);
     glEnd();
-
 
     glEndList();
 }
@@ -144,7 +171,7 @@ void BuildHouseBackSide(GLuint id, GLuint texid, float center_x, float floor_y, 
     glBindTexture(GL_TEXTURE_2D, texid);
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(x, floor_y, a);
     glTexCoord2i(0, 1);
     glVertex3f(x, floor_y, b);
@@ -175,7 +202,7 @@ void BuildHouseRightSide(GLuint id, GLuint texid, float center_x, float floor_y,
     glBindTexture(GL_TEXTURE_2D, texid);
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(h1, floor_y, z);
     glTexCoord2i(0, 1);
     glVertex3f(h2, floor_y, z);
@@ -186,7 +213,7 @@ void BuildHouseRightSide(GLuint id, GLuint texid, float center_x, float floor_y,
     glEnd();
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(h3, floor_y, z);
     glTexCoord2i(0, 1);
     glVertex3f(h4, floor_y, z);
@@ -200,7 +227,7 @@ void BuildHouseRightSide(GLuint id, GLuint texid, float center_x, float floor_y,
     if (boolWindow)
     {
         glBegin(GL_POLYGON);
-        glTexCoord2i(1, 1); // Textures
+        glTexCoord2i(1, 1);
         glVertex3f(h2, floor_y, z);
         glTexCoord2i(0, 1);
         glVertex3f(h3, floor_y, z);
@@ -211,7 +238,7 @@ void BuildHouseRightSide(GLuint id, GLuint texid, float center_x, float floor_y,
         glEnd();
 
         glBegin(GL_POLYGON);
-        glTexCoord2i(1, 1); // Textures
+        glTexCoord2i(1, 1);
         glVertex3f(h2, v2, z);
         glTexCoord2i(0, 1);
         glVertex3f(h3, v2, z);
@@ -220,11 +247,60 @@ void BuildHouseRightSide(GLuint id, GLuint texid, float center_x, float floor_y,
         glTexCoord2i(1, 0);
         glVertex3f(h2, v3, z);
         glEnd();
+
+        // Bordillo
+        float extraBorde = 0.25f;
+        glBindTexture(GL_TEXTURE_2D, texCarasHouse[0][FrontSide]);
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h2 - extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h3 + extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h3 + extraBorde, v1, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h2 - extraBorde, v1, z);
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h2 - extraBorde, v2 + extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h3 + extraBorde, v2 + extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h3 + extraBorde, v2, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h2 - extraBorde, v2, z);
+        glEnd();
+
+        // third
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h2 - extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h2, v1 - extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h2, v2 + extraBorde, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h2 - extraBorde, v2 + extraBorde, z);
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h3 + extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h3, v1 - extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h3, v2 + extraBorde, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h3 + extraBorde, v2 + extraBorde, z);
+        glEnd();
     }
     else
     {
+        glBindTexture(GL_TEXTURE_2D, texid);
         glBegin(GL_POLYGON);
-        glTexCoord2i(1, 1); // Textures
+        glTexCoord2i(1, 1);
         glVertex3f(h2, floor_y, z);
         glTexCoord2i(0, 1);
         glVertex3f(h3, floor_y, z);
@@ -256,7 +332,7 @@ void BuildHouseLeftSide(GLuint id, GLuint texid, float center_x, float floor_y, 
     glBindTexture(GL_TEXTURE_2D, texid);
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(h1, floor_y, z);
     glTexCoord2i(0, 1);
     glVertex3f(h2, floor_y, z);
@@ -267,7 +343,7 @@ void BuildHouseLeftSide(GLuint id, GLuint texid, float center_x, float floor_y, 
     glEnd();
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(h3, floor_y, z);
     glTexCoord2i(0, 1);
     glVertex3f(h4, floor_y, z);
@@ -281,7 +357,7 @@ void BuildHouseLeftSide(GLuint id, GLuint texid, float center_x, float floor_y, 
     if (boolWindow)
     {
         glBegin(GL_POLYGON);
-        glTexCoord2i(1, 1); // Textures
+        glTexCoord2i(1, 1);
         glVertex3f(h2, floor_y, z);
         glTexCoord2i(0, 1);
         glVertex3f(h3, floor_y, z);
@@ -292,7 +368,7 @@ void BuildHouseLeftSide(GLuint id, GLuint texid, float center_x, float floor_y, 
         glEnd();
 
         glBegin(GL_POLYGON);
-        glTexCoord2i(1, 1); // Textures
+        glTexCoord2i(1, 1);
         glVertex3f(h2, v2, z);
         glTexCoord2i(0, 1);
         glVertex3f(h3, v2, z);
@@ -301,11 +377,59 @@ void BuildHouseLeftSide(GLuint id, GLuint texid, float center_x, float floor_y, 
         glTexCoord2i(1, 0);
         glVertex3f(h2, v3, z);
         glEnd();
+
+        // Bordillo
+        float extraBorde = 0.25f;
+        glBindTexture(GL_TEXTURE_2D, texCarasHouse[0][FrontSide]);
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h2 - extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h3 + extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h3 + extraBorde, v1, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h2 - extraBorde, v1, z);
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h2 - extraBorde, v2 + extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h3 + extraBorde, v2 + extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h3 + extraBorde, v2, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h2 - extraBorde, v2, z);
+        glEnd();
+
+        // third
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h2 - extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h2, v1 - extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h2, v2 + extraBorde, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h2 - extraBorde, v2 + extraBorde, z);
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glTexCoord2i(1, 1);
+        glVertex3f(h3 + extraBorde, v1 - extraBorde, z);
+        glTexCoord2i(0, 1);
+        glVertex3f(h3, v1 - extraBorde, z);
+        glTexCoord2i(0, 0);
+        glVertex3f(h3, v2 + extraBorde, z);
+        glTexCoord2i(1, 0);
+        glVertex3f(h3 + extraBorde, v2 + extraBorde, z);
+        glEnd();
     }
     else
     {
         glBegin(GL_POLYGON);
-        glTexCoord2i(1, 1); // Textures
+        glTexCoord2i(1, 1);
         glVertex3f(h2, floor_y, z);
         glTexCoord2i(0, 1);
         glVertex3f(h3, floor_y, z);
@@ -336,7 +460,7 @@ void BuildHouseFrontSide(GLuint id, GLuint texid, float center_x, float floor_y,
     glBindTexture(GL_TEXTURE_2D, texid);
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(x, floor_y, b);
     glTexCoord2i(0, 1);
     glVertex3f(x, floor_y, a);
@@ -347,7 +471,7 @@ void BuildHouseFrontSide(GLuint id, GLuint texid, float center_x, float floor_y,
     glEnd();
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(x, heightDoor, c);
     glTexCoord2i(0, 1);
     glVertex3f(x, heightDoor, b);
@@ -358,7 +482,7 @@ void BuildHouseFrontSide(GLuint id, GLuint texid, float center_x, float floor_y,
     glEnd();
 
     glBegin(GL_POLYGON);
-    glTexCoord2i(1, 1); // Textures
+    glTexCoord2i(1, 1);
     glVertex3f(x, floor_y, d);
     glTexCoord2i(0, 1);
     glVertex3f(x, floor_y, c);
@@ -366,6 +490,43 @@ void BuildHouseFrontSide(GLuint id, GLuint texid, float center_x, float floor_y,
     glVertex3f(x, floor_y + edge, c);
     glTexCoord2i(1, 0);
     glVertex3f(x, floor_y + edge, d);
+    glEnd();
+
+    // Bordillo
+    float extraBorde = 0.25f;
+    glBindTexture(GL_TEXTURE_2D, texCarasHouse[0][FrontSide]);
+
+    glBegin(GL_POLYGON);
+    glTexCoord2i(1, 1);
+    glVertex3f(x, floor_y, b);
+    glTexCoord2i(0, 1);
+    glVertex3f(x, floor_y, b + extraBorde);
+    glTexCoord2i(0, 0);
+    glVertex3f(x, heightDoor + extraBorde, b + extraBorde);
+    glTexCoord2i(1, 0);
+    glVertex3f(x, heightDoor + extraBorde, b);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glTexCoord2i(1, 1);
+    glVertex3f(x, floor_y, c - extraBorde);
+    glTexCoord2i(0, 1);
+    glVertex3f(x, floor_y, c);
+    glTexCoord2i(0, 0);
+    glVertex3f(x, heightDoor + extraBorde, c);
+    glTexCoord2i(1, 0);
+    glVertex3f(x, heightDoor + extraBorde, c - extraBorde);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glTexCoord2i(1, 1);
+    glVertex3f(x, heightDoor + extraBorde, c - extraBorde);
+    glTexCoord2i(0, 1);
+    glVertex3f(x, heightDoor, c - extraBorde);
+    glTexCoord2i(0, 0);
+    glVertex3f(x, heightDoor, b + extraBorde);
+    glTexCoord2i(1, 0);
+    glVertex3f(x, heightDoor + extraBorde, b + extraBorde);
     glEnd();
 
     glEndList();

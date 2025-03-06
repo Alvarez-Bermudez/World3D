@@ -1083,7 +1083,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1741219429 c:\users\ppalvarez2\documents\github\world3d\settings.h
+1741238844 c:\users\ppalvarez2\documents\github\world3d\settings.h
 	<windows.h>
 	<gl/gl.h>
 	<gl/glext.h>
@@ -1091,7 +1091,7 @@
 	"miscellaneous.h"
 	"stb_image.h"
 
-1741233905 c:\users\ppalvarez2\documents\github\world3d\drawing.h
+1741239211 c:\users\ppalvarez2\documents\github\world3d\drawing.h
 	<gl/gl.h>
 	<gl/glu.h>
 	<stdio.h>

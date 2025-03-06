@@ -63,16 +63,22 @@ void initWorld3D_GLObjects()
     char strPath[200];
     sprintf(strPath, "res/image/house_%d/suelo.png", currentHouse);
     cargarTextura(texCarasHouse[currentHouse][Bottom], strPath);
+
     sprintf(strPath, "res/image/house_%d/techo.png", currentHouse);
     cargarTextura(texCarasHouse[currentHouse][Top], strPath);
+
     sprintf(strPath, "res/image/house_%d/cara1.png", currentHouse);
     cargarTextura(texCarasHouse[currentHouse][LeftSide], strPath);
-    sprintf(strPath, "res/image/house_%d/cara2.png", currentHouse);
-    cargarTextura(texCarasHouse[currentHouse][RightSide], strPath);
+
+    // sprintf(strPath, "res/image/house_%d/cara2.png", currentHouse);
+    // cargarTextura(texCarasHouse[currentHouse][RightSide], strPath);
+
     sprintf(strPath, "res/image/house_%d/cara3.png", currentHouse);
     cargarTextura(texCarasHouse[currentHouse][FrontSide], strPath);
-    sprintf(strPath, "res/image/house_%d/cara4.png", currentHouse);
-    cargarTextura(texCarasHouse[currentHouse][BackSide], strPath);
+
+    // sprintf(strPath, "res/image/house_%d/cara4.png", currentHouse);
+    // cargarTextura(texCarasHouse[currentHouse][BackSide], strPath);
+
     carasHouse[currentHouse][Bottom] = glGenLists(TOTAL_CARAS);
     carasHouse[currentHouse][Top] = carasHouse[currentHouse][Bottom] + 1;
     carasHouse[currentHouse][LeftSide] = carasHouse[currentHouse][Bottom] + 2;
